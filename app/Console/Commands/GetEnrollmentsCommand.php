@@ -53,7 +53,10 @@ class GetEnrollmentsCommand extends Command
 
             $enrollment = Enrollment::updateOrCreate(
                 // Critério de busca (único para cada matrícula)
-                ['student_id' => $matricula['AlunoID']],
+                [
+                    'student_id' => $matricula['AlunoID'],
+                    'enrollments_id' => $matricula['ContratoID']
+                ],
 
                 // Campos que serão atualizados/criados
                 [
