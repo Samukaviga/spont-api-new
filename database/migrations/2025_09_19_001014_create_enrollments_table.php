@@ -21,9 +21,9 @@ return new class extends Migration
             $table->string('class_name')->nullable();
             $table->string('course_name')->nullable();
             $table->string('status')->nullable();
-            $table->string('start_date')->nullable();
-            $table->string('deadline_date')->nullable();
-            $table->string('enrollment_date')->nullable();
+            $table->date('start_date')->nullable();
+            $table->date('deadline_date')->nullable();
+            $table->date('enrollment_date')->nullable();
             $table->string('contractor')->nullable();
             $table->string('financial_released')->nullable();
             $table->string('contract_number')->nullable();

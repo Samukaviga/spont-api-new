@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Enrollment;
 use App\Services\SponteService;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class GetEnrollmentsCommand extends Command
@@ -42,7 +43,7 @@ class GetEnrollmentsCommand extends Command
 
             // print_r($matricula);
 
-           // dd($matricula);
+            // dd($matricula);
 
             // Se AlunoID não existir, for null ou 0 → pula
             if (empty($matricula['AlunoID']) || $matricula['AlunoID'] == 0) {
@@ -51,14 +52,23 @@ class GetEnrollmentsCommand extends Command
                 continue;
             }
 
+            $startDateFormat = !empty($matricula['DataInicio']) && is_string($matricula['DataInicio'])
+                ? Carbon::createFromFormat('d/m/Y', $matricula['DataInicio'])->format('Y-m-d')
+                : null;
+
+            $deadlineDateFormat = !empty($matricula['DataTermino']) && is_string($matricula['DataTermino'])
+                ? Carbon::createFromFormat('d/m/Y', $matricula['DataTermino'])->format('Y-m-d')
+                : null;
+
+            $enrollmentDate = !empty($matricula['DataMatricula']) && is_string($matricula['DataMatricula'])
+                ? Carbon::createFromFormat('d/m/Y', $matricula['DataMatricula'])->format('Y-m-d')
+                : null;
+
             $enrollment = Enrollment::updateOrCreate(
-                // Critério de busca (único para cada matrícula)
                 [
                     'student_id' => $matricula['AlunoID'],
                     'enrollments_id' => $matricula['ContratoID']
                 ],
-
-                // Campos que serão atualizados/criados
                 [
                     'enrollments_id' => $matricula['ContratoID'] ?? null,
                     'course_id' => $matricula['CursoID'] ?? null,
@@ -67,17 +77,16 @@ class GetEnrollmentsCommand extends Command
                     'class_name' => is_array($matricula['NomeTurma'] ?? null) ? null : ($matricula['NomeTurma'] ?? null),
                     'course_name' => is_array($matricula['NomeCurso'] ?? null) ? null : ($matricula['NomeCurso'] ?? null),
                     'status' => is_array($matricula['Situacao'] ?? null) ? null : ($matricula['Situacao'] ?? null),
-                    'start_date' => is_array($matricula['DataInicio'] ?? null) ? null : ($matricula['DataInicio'] ?? null),
-                    'deadline_date' => is_array($matricula['DataTermino'] ?? null) ? null : ($matricula['DataTermino'] ?? null),
-                    'enrollment_date' => is_array($matricula['DataMatricula'] ?? null) ? null : ($matricula['DataMatricula'] ?? null),
+                    'start_date' => $startDateFormat ?? null,
+                    'deadline_date' => $deadlineDateFormat ?? null,
+                    'enrollment_date' => $enrollmentDate ?? null,
                     'contractor' => is_array($matricula['Contratante'] ?? null) ? null : ($matricula['Contratante'] ?? null),
                     'financial_released' => is_array($matricula['FinanceiroLancado'] ?? null) ? null : ($matricula['FinanceiroLancado'] ?? null),
                     'contract_number' => is_array($matricula['NumeroContrato'] ?? null) ? null : ($matricula['NumeroContrato'] ?? null),
                 ]
             );
 
-            $this->info("✅ Matrícula {$enrollment->id} criada para aluno ".($matricula['Aluno'] ?? 'Desconhecido'));
+            $this->info("✅ Matrícula {$enrollment->id} criada para aluno " . ($matricula['Aluno'] ?? 'Desconhecido'));
         }
-
     }
 }
