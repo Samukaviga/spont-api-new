@@ -43,7 +43,7 @@ class GetEnrollmentsCommand extends Command
 
             // print_r($matricula);
 
-            // dd($matricula);
+            dd($matricula);
 
             // Se AlunoID não existir, for null ou 0 → pula
             if (empty($matricula['AlunoID']) || $matricula['AlunoID'] == 0) {
