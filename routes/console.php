@@ -11,7 +11,7 @@ Artisan::command('inspire', function () {
 
 Schedule::command('enrollments')
     ->timezone('America/Sao_Paulo')
-//    ->everyMinute()
-   ->everyThreeHours()
+   ->everyMinute()
+  // ->everyThreeHours()
    // ->hourly()
     ->onOneServer();
