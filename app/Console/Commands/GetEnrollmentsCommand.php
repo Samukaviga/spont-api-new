@@ -49,16 +49,14 @@ class GetEnrollmentsCommand extends Command
 
             // Se AlunoID não existir, for null ou 0 → pula
             if (empty($matricula['AlunoID']) || $matricula['AlunoID'] == 0) {
-                $this->warn('⚠️ Matrícula ignorada (AlunoID inválido).');
+                $this->warn('⚠️ Aluno com mais de uma matricula .');
 
 
                 foreach ($matricula as $res) {
 
 
-
-
                     if (!is_array($res)) {
-                        $this->warn('⚠️ Item de matrícula não é array, ignorado.');
+                        $this->warn('⚠️  Sem valor atribuido');
                         continue;
                     }
 
@@ -76,10 +74,16 @@ class GetEnrollmentsCommand extends Command
                         ? Carbon::createFromFormat('d/m/Y', $res['DataMatricula'])->format('Y-m-d')
                         : null;
 
+                    $contratoId = !empty($res['ContratoID']) ? (int) $res['ContratoID'] : null;
+                    if (!$contratoId) {
+                        $this->warn("⚠️ Matrícula sem ContratoID válido, ignorada.");
+                        continue;
+                    }
+
 
                     $enrollment = Enrollment::updateOrCreate(
                         [
-                            'enrollments_id' => (int) $res['ContratoID']
+                            'enrollments_id' => (int) $contratoId
                         ],
                         [
                             'student_id' => (int) $res['AlunoID'],
@@ -123,9 +127,16 @@ class GetEnrollmentsCommand extends Command
                 ? Carbon::createFromFormat('d/m/Y', $matricula['DataMatricula'])->format('Y-m-d')
                 : null;
 
+            $contratoIdTwo = !empty($matricula['ContratoID']) ? (int) $matricula['ContratoID'] : null;
+                    if (!$contratoIdTwo) {
+                        $this->warn("⚠️ Matrícula sem ContratoID válido, ignorada.");
+                        continue;
+                    }
+
+
             $enrollment = Enrollment::updateOrCreate(
                 [
-                    'enrollments_id' => (int) $matricula['ContratoID']
+                    'enrollments_id' => (int) $contratoIdTwo
                 ],
                 [
                     'student_id' => (int) $matricula['AlunoID'],
