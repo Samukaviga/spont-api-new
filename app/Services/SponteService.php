@@ -72,43 +72,43 @@ class SponteService
     }
 
     public function getLinhaDigitavelBoletos($accountReceivable, $numberInstallment)
-{
-    $client = new \SoapClient("$this->apiUrl?wsdl");
+    {
+        $client = new \SoapClient("$this->apiUrl?wsdl");
 
-    $params = [
-        'nCodigoCliente'  => $this->codigoCliente,
-        'sToken'          => $this->token,
-        'nContaReceberID' => $accountReceivable,
-        'nNumeroParcela'  => $numberInstallment,
-    ];
+        $params = [
+            'nCodigoCliente'  => $this->codigoCliente,
+            'sToken'          => $this->token,
+            'nContaReceberID' => $accountReceivable,
+            'nNumeroParcela'  => $numberInstallment,
+        ];
 
-    $result = $client->__soapCall("GetLinhaDigitavelBoletos", [$params]);
+        $result = $client->__soapCall("GetLinhaDigitavelBoletos", [$params]);
 
-    $xmlString = $result->GetLinhaDigitavelBoletosResult->any ?? null;
+        $xmlString = $result->GetLinhaDigitavelBoletosResult->any ?? null;
 
-    if (!$xmlString || !is_string($xmlString)) {
+        if (!$xmlString || !is_string($xmlString)) {
+            return [
+                'status' => 'error',
+                'message' => 'Retorno inesperado: ' . print_r($xmlString, true),
+                'linha_digitavel' => null,
+            ];
+        }
+
+        // 🔥 extrai só o trecho <diffgr:diffgram> ... </diffgr:diffgram>
+        if (preg_match('/<diffgr:diffgram.*<\/diffgr:diffgram>/s', $xmlString, $matches)) {
+            $xmlString = $matches[0];
+        }
+
+        $xml = simplexml_load_string($xmlString);
+
+        $retorno = $xml->DocumentElement->RetornosOperacao->RetornoOperacao ?? null;
+        $linhaDigitavel = $xml->DocumentElement->RetornosOperacao->LinhaDigitavel ?? null;
+
         return [
-            'status' => 'error',
-            'message' => 'Retorno inesperado: ' . print_r($xmlString, true),
-            'linha_digitavel' => null,
+            'status'          => (string) $retorno,
+            'linha_digitavel' => (string) $linhaDigitavel,
         ];
     }
-
-    // 🔥 extrai só o trecho <diffgr:diffgram> ... </diffgr:diffgram>
-    if (preg_match('/<diffgr:diffgram.*<\/diffgr:diffgram>/s', $xmlString, $matches)) {
-        $xmlString = $matches[0];
-    }
-
-    $xml = simplexml_load_string($xmlString);
-
-    $retorno = $xml->DocumentElement->RetornosOperacao->RetornoOperacao ?? null;
-    $linhaDigitavel = $xml->DocumentElement->RetornosOperacao->LinhaDigitavel ?? null;
-
-    return [
-        'status'          => (string) $retorno,
-        'linha_digitavel' => (string) $linhaDigitavel,
-    ];
-}
 
 
     public function getSituacoesAlunos($studentId)
