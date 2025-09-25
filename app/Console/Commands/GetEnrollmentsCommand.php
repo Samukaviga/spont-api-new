@@ -33,9 +33,11 @@ class GetEnrollmentsCommand extends Command
 
         $alunos = $sponteService->getAlunos();
 
+
         foreach ($alunos as $aluno) {
 
-            // echo $aluno['AlunoID'];
+           // dd($aluno);
+              // echo $aluno['AlunoID'];
 
             $matricula = $sponteService->getMatriculas($aluno['AlunoID']);
 
@@ -43,7 +45,7 @@ class GetEnrollmentsCommand extends Command
 
             // print_r($matricula);
 
-            dd($matricula);
+            //dd($matricula);
 
             // Se AlunoID não existir, for null ou 0 → pula
             if (empty($matricula['AlunoID']) || $matricula['AlunoID'] == 0) {
@@ -66,13 +68,13 @@ class GetEnrollmentsCommand extends Command
 
             $enrollment = Enrollment::updateOrCreate(
                 [
-                    'student_id' => $matricula['AlunoID'],
-                    'enrollments_id' => $matricula['ContratoID']
+                    'student_id' => (int) $matricula['AlunoID'],
+                    'enrollments_id' => (int) $matricula['ContratoID']
                 ],
                 [
-                    'enrollments_id' => $matricula['ContratoID'] ?? null,
-                    'course_id' => $matricula['CursoID'] ?? null,
-                    'class_id' => $matricula['TurmaID'] ?? null,
+                    'enrollments_id' => (int) $matricula['ContratoID'] ?? null,
+                    'course_id' => (int) $matricula['CursoID'] ?? null,
+                    'class_id' => (int) $matricula['TurmaID'] ?? null,
                     'student_name' => is_array($matricula['Aluno'] ?? null) ? null : ($matricula['Aluno'] ?? null),
                     'class_name' => is_array($matricula['NomeTurma'] ?? null) ? null : ($matricula['NomeTurma'] ?? null),
                     'course_name' => is_array($matricula['NomeCurso'] ?? null) ? null : ($matricula['NomeCurso'] ?? null),

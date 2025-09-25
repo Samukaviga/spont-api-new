@@ -26,7 +26,7 @@ class GetStudentFinancialCommand extends Command
      */
     public function handle()
     {
-         $sponteService = new SponteService;
+        $sponteService = new SponteService;
 
         $alunos = $sponteService->getAlunos();
 
@@ -34,17 +34,19 @@ class GetStudentFinancialCommand extends Command
 
             // echo $aluno['AlunoID'];
 
+            //dd($aluno);
+
             $financeiro = $sponteService->getFinanceiro($aluno['AlunoID']);
 
-          //  dd($financeiro);
+            dd($financeiro);
 
             $contaReceberId = $financeiro[0]['ContaReceberID'];
 
-           // dd($contaReceberId);
+            // dd($contaReceberId);
 
-           $boleto = $sponteService->getLinhaDigitavelBoletos($contaReceberId, 12);
+            $boleto = $sponteService->getLinhaDigitavelBoletos($contaReceberId, 10);
 
             dd($boleto);
-            }
+        }
     }
 }
