@@ -45,7 +45,7 @@ class GetEnrollmentsCommand extends Command
 
             // print_r($matricula);
 
-            //dd($matricula);
+          //  var_dump($matricula);
 
             // Se AlunoID não existir, for null ou 0 → pula
             if (empty($matricula['AlunoID']) || $matricula['AlunoID'] == 0) {
@@ -68,10 +68,10 @@ class GetEnrollmentsCommand extends Command
 
             $enrollment = Enrollment::updateOrCreate(
                 [
-                    'student_id' => (int) $matricula['AlunoID'],
                     'enrollments_id' => (int) $matricula['ContratoID']
                 ],
                 [
+                    'student_id' => (int) $matricula['AlunoID'],
                     'enrollments_id' => (int) $matricula['ContratoID'] ?? null,
                     'course_id' => (int) $matricula['CursoID'] ?? null,
                     'class_id' => (int) $matricula['TurmaID'] ?? null,
@@ -89,6 +89,7 @@ class GetEnrollmentsCommand extends Command
             );
 
             $this->info("✅ Matrícula {$enrollment->id} criada para aluno " . ($matricula['Aluno'] ?? 'Desconhecido'));
-        }
+
+         }
     }
 }

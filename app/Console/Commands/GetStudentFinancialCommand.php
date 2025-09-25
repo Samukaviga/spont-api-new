@@ -38,7 +38,7 @@ class GetStudentFinancialCommand extends Command
 
             $financeiro = $sponteService->getFinanceiro($aluno['AlunoID']);
 
-           // dd($financeiro);
+            dd($financeiro);
 
             $contaReceberId = $financeiro[0]['ContaReceberID'];
 
