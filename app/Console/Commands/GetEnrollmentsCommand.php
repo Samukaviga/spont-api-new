@@ -36,8 +36,8 @@ class GetEnrollmentsCommand extends Command
 
         foreach ($alunos as $aluno) {
 
-           // dd($aluno);
-              // echo $aluno['AlunoID'];
+            // dd($aluno);
+            // echo $aluno['AlunoID'];
 
             $matricula = $sponteService->getMatriculas($aluno['AlunoID']);
 
@@ -45,11 +45,68 @@ class GetEnrollmentsCommand extends Command
 
             // print_r($matricula);
 
-          //  var_dump($matricula);
+            //  var_dump($matricula);
 
             // Se AlunoID não existir, for null ou 0 → pula
             if (empty($matricula['AlunoID']) || $matricula['AlunoID'] == 0) {
                 $this->warn('⚠️ Matrícula ignorada (AlunoID inválido).');
+
+
+                foreach ($matricula as $res) {
+
+
+
+
+                    if (!is_array($res)) {
+                        $this->warn('⚠️ Item de matrícula não é array, ignorado.');
+                        continue;
+                    }
+
+                    // -------------
+
+                    $startDateFormat = !empty($res['DataInicio']) && is_string($res['DataInicio'])
+                        ? Carbon::createFromFormat('d/m/Y', $res['DataInicio'])->format('Y-m-d')
+                        : null;
+
+                    $deadlineDateFormat = !empty($res['DataTermino']) && is_string($res['DataTermino'])
+                        ? Carbon::createFromFormat('d/m/Y', $res['DataTermino'])->format('Y-m-d')
+                        : null;
+
+                    $enrollmentDate = !empty($res['DataMatricula']) && is_string($res['DataMatricula'])
+                        ? Carbon::createFromFormat('d/m/Y', $res['DataMatricula'])->format('Y-m-d')
+                        : null;
+
+
+                    $enrollment = Enrollment::updateOrCreate(
+                        [
+                            'enrollments_id' => (int) $res['ContratoID']
+                        ],
+                        [
+                            'student_id' => (int) $res['AlunoID'],
+                            'enrollments_id' => (int) $res['ContratoID'] ?? null,
+                            'course_id' => (int) $res['CursoID'] ?? null,
+                            'class_id' => (int) $res['TurmaID'] ?? null,
+                            'student_name' => is_array($res['Aluno'] ?? null) ? null : ($res['Aluno'] ?? null),
+                            'class_name' => is_array($res['NomeTurma'] ?? null) ? null : ($res['NomeTurma'] ?? null),
+                            'course_name' => is_array($res['NomeCurso'] ?? null) ? null : ($res['NomeCurso'] ?? null),
+                            'status' => is_array($res['Situacao'] ?? null) ? null : ($res['Situacao'] ?? null),
+                            'start_date' => $startDateFormat ?? null,
+                            'deadline_date' => $deadlineDateFormat ?? null,
+                            'enrollment_date' => $enrollmentDate ?? null,
+                            'contractor' => is_array($res['Contratante'] ?? null) ? null : ($res['Contratante'] ?? null),
+                            'financial_released' => is_array($res['FinanceiroLancado'] ?? null) ? null : ($res['FinanceiroLancado'] ?? null),
+                            'contract_number' => is_array($res['NumeroContrato'] ?? null) ? null : ($res['NumeroContrato'] ?? null),
+                        ]
+                    );
+
+                    $this->info("✅ Matrícula Araay {$enrollment->id} criada para aluno " . ($res['Aluno'] ?? 'Desconhecido'));
+
+
+
+                    //---------------
+
+                }
+
 
                 continue;
             }
@@ -89,7 +146,6 @@ class GetEnrollmentsCommand extends Command
             );
 
             $this->info("✅ Matrícula {$enrollment->id} criada para aluno " . ($matricula['Aluno'] ?? 'Desconhecido'));
-
-         }
+        }
     }
 }
