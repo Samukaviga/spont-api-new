@@ -21,7 +21,7 @@ class SponteService
     public function getAlunos()
     {
 
-        $response = Http::get("$this->apiUrl/GetAlunos3", [
+        $response = Http::get("$this->apiUrl/GetAlunos", [
             'nCodigoCliente' => $this->codigoCliente,
             'sToken' => $this->token,
             'sParametrosBusca' => "Nome=", // Buscar todos os alunos
@@ -69,6 +69,38 @@ class SponteService
         $data = json_decode($json, true);
 
         return $data['wsFinanceiro'];
+    }
+
+    public function getParcelas($studentId)
+    {
+         $response = Http::get("$this->apiUrl/GetParcelas", [
+            'nCodigoCliente' => $this->codigoCliente,
+            'sToken' => $this->token,
+            'sParametrosBusca' => "AlunoID=$studentId", // Buscar todos os alunos
+
+        ]);
+
+        $xml = simplexml_load_string($response->body());
+        $json = json_encode($xml);
+        $data = json_decode($json, true);
+
+        return $data['wsParcela'];
+    }
+
+     public function getParcelasPagar($studentId)
+    {
+         $response = Http::get("$this->apiUrl/GetParcelasPagar", [
+            'nCodigoCliente' => $this->codigoCliente,
+            'sToken' => $this->token,
+            'sParametrosBusca' => "AlunoID=$studentId", // Buscar todos os alunos
+
+        ]);
+
+        $xml = simplexml_load_string($response->body());
+        $json = json_encode($xml);
+        $data = json_decode($json, true);
+
+        return $data['wsParcelaPagar'];
     }
 
     public function getLinhaDigitavelBoletos($accountReceivable, $numberInstallment)

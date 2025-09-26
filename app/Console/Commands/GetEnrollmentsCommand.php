@@ -43,6 +43,8 @@ class GetEnrollmentsCommand extends Command
 
             // $matricula = $sponteService->getMatriculas($idAluno);
 
+            //dd($matricula);
+
             // print_r($matricula);
 
             //  var_dump($matricula);
