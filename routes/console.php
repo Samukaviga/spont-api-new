@@ -14,4 +14,14 @@ Schedule::command('enrollments')
    ->everyMinute()
   // ->everyThreeHours()
    // ->hourly()
-    ->onOneServer();
+    ->onOneServer()
+    ->runInBackground();
+
+
+Schedule::command('financial')
+    ->timezone('America/Sao_Paulo')
+   ->everyMinute()
+  // ->everyThreeHours()
+   // ->hourly()
+    ->onOneServer()
+    ->runInBackground();
