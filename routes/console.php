@@ -17,8 +17,24 @@ Schedule::command('enrollments')
     ->onOneServer()
     ->runInBackground();
 
+Schedule::command('installment')
+    ->timezone('America/Sao_Paulo')
+   ->everyMinute()
+  // ->everyThreeHours()
+   // ->hourly()
+    ->onOneServer()
+    ->runInBackground();
+
 
 Schedule::command('financial')
+    ->timezone('America/Sao_Paulo')
+   ->everyMinute()
+  // ->everyThreeHours()
+   // ->hourly()
+    ->onOneServer()
+    ->runInBackground();
+
+Schedule::command('student')
     ->timezone('America/Sao_Paulo')
    ->everyMinute()
   // ->everyThreeHours()
