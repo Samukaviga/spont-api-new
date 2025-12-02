@@ -23,6 +23,8 @@ class Enrollment extends Model
             'contractor',
             'financial_released',
             'contract_number',
+            'type_of_contract',
+            'type',
     ];
 
 }

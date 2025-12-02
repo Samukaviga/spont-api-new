@@ -30,7 +30,7 @@ class SponteApiController extends Controller
     {
         $student = $this->sponteService->getAlunos();
 
-        dd($student);
+        return response()->json($student);
 
     }
 
@@ -45,7 +45,7 @@ class SponteApiController extends Controller
     {
         $accountPayable = $this->sponteService->getContasPagar();
 
-        dd($accountPayable);
+        return response()->json($accountPayable);
     }
 
     public function getMatriculas()

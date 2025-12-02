@@ -41,9 +41,18 @@ class GetEnrollmentsCommand extends Command
 
             $matricula = $sponteService->getMatriculas($aluno['AlunoID']);
 
+            if ($matricula instanceof \Illuminate\Http\JsonResponse) {
+                $matricula = $matricula->getData(true); // agora vira array
+            }
+
+            if (!is_array($matricula)) {
+                $this->error("❌ getMatriculas não retornou um array.");
+                dd($matricula);
+            }
+
             // $matricula = $sponteService->getMatriculas($idAluno);
 
-            //dd($matricula);
+            // dd($matricula);
 
             // print_r($matricula);
 
@@ -102,6 +111,8 @@ class GetEnrollmentsCommand extends Command
                             'contractor' => is_array($res['Contratante'] ?? null) ? null : ($res['Contratante'] ?? null),
                             'financial_released' => is_array($res['FinanceiroLancado'] ?? null) ? null : ($res['FinanceiroLancado'] ?? null),
                             'contract_number' => is_array($res['NumeroContrato'] ?? null) ? null : ($res['NumeroContrato'] ?? null),
+                            'type_of_contract' => is_array($res['TipoContratoID'] ?? null) ? null : ($res['TipoContratoID'] ?? null),
+                            'type' => is_array($res['Tipo'] ?? null) ? null : ($res['Tipo'] ?? null),
                         ]
                     );
 
@@ -130,10 +141,10 @@ class GetEnrollmentsCommand extends Command
                 : null;
 
             $contratoIdTwo = !empty($matricula['ContratoID']) ? (int) $matricula['ContratoID'] : null;
-                    if (!$contratoIdTwo) {
-                        $this->warn("⚠️ Matrícula sem ContratoID válido, ignorada.");
-                        continue;
-                    }
+            if (!$contratoIdTwo) {
+                $this->warn("⚠️ Matrícula sem ContratoID válido, ignorada.");
+                continue;
+            }
 
 
             $enrollment = Enrollment::updateOrCreate(

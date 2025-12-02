@@ -27,6 +27,8 @@ return new class extends Migration
             $table->string('contractor')->nullable();
             $table->string('financial_released')->nullable();
             $table->string('contract_number')->nullable();
+            $table->string('type_of_contract')->nullable();
+            $table->string('type')->nullable();
             $table->timestamps();
 
         });
